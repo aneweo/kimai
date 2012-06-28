@@ -1,0 +1,622 @@
+[27.06.2012 16:43:34] -- begin install ----------------------------------
+[27.06.2012 16:43:35] CREATE TABLE `kimai_usr` ( `usr_ID` int(10) NOT NULL, `usr_name` varchar(160) NOT NULL, `usr_alias` varchar(10), `usr_grp` int(5) NOT NULL default '1', `usr_sts` tinyint(1) NOT NULL default '2', `usr_trash` tinyint(1) NOT NULL default '0', `usr_active` tinyint(1) NOT NULL default '1', `usr_mail` varchar(160) NOT NULL DEFAULT '', `pw` varchar(254) NULL DEFAULT NULL, `ban` int(1) NOT NULL default '0', `banTime` int(10) NOT NULL default '0', `secure` varchar(60) NOT NULL default '0', `lastProject` int(10) NOT NULL default '1', `lastEvent` int(10) NOT NULL default '1', `lastRecord` int(10) NOT NULL default '0', `timespace_in` varchar(60) NOT NULL default '0', `timespace_out` varchar(60) NOT NULL default '0', PRIMARY KEY (`usr_name`));
+[27.06.2012 16:43:35] CREATE TABLE `kimai_preferences` ( `userID` int(10) NOT NULL, `var` varchar(255) NOT NULL, `value` varchar(255) NOT NULL, PRIMARY KEY (`userID`,`var`));
+[27.06.2012 16:43:35] CREATE TABLE `kimai_evt` ( `evt_ID` int(10) NOT NULL auto_increment, `evt_name` varchar(255) NOT NULL, `evt_comment` TEXT NOT NULL, `evt_visible` TINYINT(1) NOT NULL DEFAULT '1', `evt_filter` TINYINT(1) NOT NULL DEFAULT '0', `evt_trash` TINYINT(1) NOT NULL DEFAULT '0', PRIMARY KEY (`evt_ID`)) AUTO_INCREMENT=1;
+[27.06.2012 16:43:35] CREATE TABLE `kimai_grp` ( `grp_ID` int(10) NOT NULL auto_increment, `grp_name` varchar(160) NOT NULL, `grp_trash` TINYINT(1) NOT NULL DEFAULT '0', PRIMARY KEY (`grp_ID`)) AUTO_INCREMENT=1;
+[27.06.2012 16:43:36] CREATE TABLE `kimai_ldr` (`uid` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `grp_ID` int(10) NOT NULL, `grp_leader` int(10) NOT NULL, UNIQUE (`grp_ID` ,`grp_leader`));
+[27.06.2012 16:43:36] CREATE TABLE `kimai_grp_knd` (`uid` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `grp_ID` INT NOT NULL, `knd_ID` INT NOT NULL, UNIQUE (`grp_ID` ,`knd_ID`));
+[27.06.2012 16:43:36] CREATE TABLE `kimai_grp_pct` (`uid` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `grp_ID` INT NOT NULL, `pct_ID` INT NOT NULL, UNIQUE (`grp_ID` ,`pct_ID`));
+[27.06.2012 16:43:36] CREATE TABLE `kimai_grp_evt` (`uid` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `grp_ID` INT NOT NULL, `evt_ID` INT NOT NULL, UNIQUE (`grp_ID` ,`evt_ID`)) ;
+[27.06.2012 16:43:36] CREATE TABLE `kimai_pct_evt` (`uid` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `pct_ID` INT NOT NULL, `evt_ID` INT NOT NULL, UNIQUE (`pct_ID` ,`evt_ID`)) ;
+[27.06.2012 16:43:36] CREATE TABLE `kimai_knd` ( `knd_ID` int(10) NOT NULL auto_increment, `knd_name` varchar(255) NOT NULL, `knd_password` varchar(255), `knd_secure` varchar(60) NOT NULL default '0', `knd_comment` TEXT NOT NULL, `knd_visible` TINYINT(1) NOT NULL DEFAULT '1', `knd_filter` TINYINT(1) NOT NULL DEFAULT '0', `knd_company` varchar(255) NOT NULL, `knd_vat` varchar(255) NOT NULL, `knd_contact` varchar(255) NOT NULL, `knd_street` varchar(255) NOT NULL, `knd_zipcode` varchar(255) NOT NULL, `knd_city` varchar(255) NOT NULL, `knd_tel` varchar(255) NOT NULL, `knd_fax` varchar(255) NOT NULL, `knd_mobile` varchar(255) NOT NULL, `knd_mail` varchar(255) NOT NULL, `knd_homepage` varchar(255) NOT NULL, `knd_trash` TINYINT(1) NOT NULL DEFAULT '0', PRIMARY KEY (`knd_ID`)) AUTO_INCREMENT=1;
+[27.06.2012 16:43:37] CREATE TABLE `kimai_pct` ( `pct_ID` int(10) NOT NULL auto_increment, `pct_kndID` int(3) NOT NULL, `pct_name` varchar(255) NOT NULL, `pct_comment` TEXT NOT NULL, `pct_visible` TINYINT(1) NOT NULL DEFAULT '1', `pct_filter` TINYINT(1) NOT NULL DEFAULT '0', `pct_trash` TINYINT(1) NOT NULL DEFAULT '0', `pct_budget` decimal(10,2) NOT NULL DEFAULT '0.00', `pct_internal` TINYINT( 1 ) NOT NULL DEFAULT 0, PRIMARY KEY (`pct_ID`)) AUTO_INCREMENT=1;
+[27.06.2012 16:43:37] ALTER TABLE `kimai_pct` ADD INDEX ( `pct_kndID` ) 
+[27.06.2012 16:43:37] CREATE TABLE `kimai_zef` ( `zef_ID` int(10) NOT NULL auto_increment, `zef_in` int(10) NOT NULL default '0', `zef_out` int(10) NOT NULL default '0', `zef_time` int(6) NOT NULL default '0', `zef_usrID` int(10) NOT NULL, `zef_pctID` int(10) NOT NULL, `zef_evtID` int(10) NOT NULL, `zef_comment` TEXT NULL DEFAULT NULL, `zef_comment_type` TINYINT(1) NOT NULL DEFAULT '0', `zef_cleared` TINYINT(1) NOT NULL DEFAULT '0', `zef_location` VARCHAR(50), `zef_trackingnr` varchar(30), `zef_rate` DECIMAL( 10, 2 ) NOT NULL DEFAULT '0', PRIMARY KEY (`zef_ID`)) AUTO_INCREMENT=1;
+[27.06.2012 16:43:38] ALTER TABLE `kimai_zef` ADD INDEX ( `zef_usrID` ) 
+[27.06.2012 16:43:38] ALTER TABLE `kimai_zef` ADD INDEX ( `zef_pctID` ) 
+[27.06.2012 16:43:38] ALTER TABLE `kimai_zef` ADD INDEX ( `zef_evtID` ) 
+[27.06.2012 16:43:39] CREATE TABLE `kimai_var` ( `var` varchar(255) NOT NULL, `value` varchar(255) NOT NULL, PRIMARY KEY (`var`));
+[27.06.2012 16:43:39] CREATE TABLE `kimai_rates` ( `user_id` int(10) DEFAULT NULL, `project_id` int(10) DEFAULT NULL, `event_id` int(10) DEFAULT NULL, `rate` decimal(10,2) NOT NULL);
+[27.06.2012 16:43:39] CREATE TABLE `kimai_exp` ( `exp_ID` int(10) NOT NULL AUTO_INCREMENT, `exp_timestamp` int(10) NOT NULL DEFAULT '0', `exp_usrID` int(10) NOT NULL, `exp_pctID` int(10) NOT NULL, `exp_designation` text NOT NULL, `exp_comment` text NOT NULL, `exp_comment_type` tinyint(1) NOT NULL DEFAULT '0', `exp_refundable` tinyint(1) unsigned NOT NULL default '0' COMMENT 'expense refundable to employee (0 = no, 1 = yes)', `exp_cleared` tinyint(1) NOT NULL DEFAULT '0', `exp_multiplier` decimal(10,2) NOT NULL DEFAULT '1.00', `exp_value` decimal(10,2) NOT NULL DEFAULT '0.00', PRIMARY KEY (`exp_ID`)) AUTO_INCREMENT=1;
+[27.06.2012 16:43:39] ALTER TABLE `kimai_exp` ADD INDEX ( `exp_usrID` ) 
+[27.06.2012 16:43:39] ALTER TABLE `kimai_exp` ADD INDEX ( `exp_pctID` ) 
+[27.06.2012 16:43:39] INSERT INTO `kimai_grp` (`grp_name`) VALUES ('admin');
+[27.06.2012 16:43:40] INSERT INTO `kimai_evt` (`evt_ID`, `evt_name`, `evt_comment`) VALUES (1, 'testing', '');
+[27.06.2012 16:43:40] INSERT INTO `kimai_knd` (`knd_ID`, `knd_name`, `knd_comment`, `knd_company`, `knd_street`, `knd_zipcode`, `knd_city`, `knd_tel`, `knd_fax`, `knd_mobile`, `knd_mail`, `knd_homepage`, `knd_vat`) VALUES (1, 'Test-Customer', '', '', '', '', '', '', '', '', '', '','');
+[27.06.2012 16:43:40] INSERT INTO `kimai_pct` (`pct_ID`, `pct_kndID`, `pct_name`, `pct_comment`) VALUES (1, 1, 'Test-Project', '');
+[27.06.2012 16:43:40] INSERT INTO `kimai_usr` (`usr_ID`,`usr_name`,`usr_mail`,`pw`,`usr_sts` ) VALUES ('286379291','admin','admin@yourwebspace.de','94c1056b7796ca950f38a123bec4e5a3','0');
+[27.06.2012 16:43:40] INSERT INTO `kimai_preferences` (`userID`,`var`,`value`) VALUES ('286379291','ui.rowlimit','100'),('286379291','ui.skin','standard'),('286379291','timezone','America/Vancouver');
+[27.06.2012 16:43:40] INSERT INTO `kimai_ldr` (`grp_ID`,`grp_leader`) VALUES ('1','286379291');
+[27.06.2012 16:43:40] INSERT INTO `kimai_grp_evt` (`grp_ID`, `evt_ID`) VALUES (1, 1);
+[27.06.2012 16:43:40] INSERT INTO `kimai_grp_knd` (`grp_ID`, `knd_ID`) VALUES (1, 1);
+[27.06.2012 16:43:40] INSERT INTO `kimai_grp_pct` (`grp_ID`, `pct_ID`) VALUES (1, 1);
+[27.06.2012 16:43:40] INSERT INTO `kimai_var` (`var`, `value`) VALUES ('version', '0.9.2');
+[27.06.2012 16:43:40] INSERT INTO `kimai_var` (`var`, `value`) VALUES ('login', '1');
+[27.06.2012 16:43:40] INSERT INTO `kimai_var` (`var`, `value`) VALUES ('kimail', 'kimai@yourwebspace.com');
+[27.06.2012 16:43:40] INSERT INTO `kimai_var` (`var`, `value`) VALUES ('adminmail', 'admin@yourwebspace.com');
+[27.06.2012 16:43:40] INSERT INTO `kimai_var` (`var`, `value`) VALUES ('loginTries', '3');
+[27.06.2012 16:43:40] INSERT INTO `kimai_var` (`var`, `value`) VALUES ('loginBanTime', '900');
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`, `value`) VALUES ('lastdbbackup', '0');
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`, `value`) VALUES ('revision', '1306');
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('currency_name','Euro')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('currency_sign','€')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('currency_first','0')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('show_sensible_data','1')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('show_update_warn','1')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('check_at_startup','0')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('show_daySeperatorLines','1')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('show_gabBreaks','0')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('show_RecordAgain','1')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('show_TrackingNr','1')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('date_format_0','%d.%m.%Y')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('date_format_1','%d.%m.')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('date_format_2','%d.%m.%Y')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('language','en')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('roundPrecision','0')
+[27.06.2012 16:43:41] INSERT INTO `kimai_var` (`var`,`value`) VALUES('decimalSeparator',',')
+[27.06.2012 16:43:42] INSERT INTO `kimai_var` (`var`,`value`) VALUES('durationWithSeconds','0')
+[27.06.2012 16:43:42] INSERT INTO `kimai_var` (`var`,`value`) VALUES('defaultTimezone','America/Vancouver')
+[27.06.2012 16:43:42] INSERT INTO `kimai_var` (`var`,`value`) VALUES('exactSums','0')
+[27.06.2012 16:43:42] INSERT INTO `kimai_var` (`var`,`value`) VALUES('defaultVat','0')
+[27.06.2012 16:43:42] -- installation finished without error ------------
+[27.06.2012 16:43:51] login: admin as user
+[27.06.2012 16:43:52] KSPI axAction (admin): securityWarning
+[27.06.2012 16:45:42] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:45:42] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:45:42] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:46:08] KSPI axAction (admin): prefs
+[27.06.2012 16:46:22] login: admin as user
+[27.06.2012 16:46:47] KSPI axAction (admin): editUsr
+[27.06.2012 16:47:41] KSPI axAction (admin): sendEditUsr
+[27.06.2012 16:47:41] KSPI axAction (admin): reload_usr
+[27.06.2012 16:47:41] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:47:41] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:47:51] KSPI axAction (admin): prefs
+[27.06.2012 16:52:17] KSPI axAction (admin): editPrefs
+[27.06.2012 16:52:28] KSPI axAction (admin): createUsr
+[27.06.2012 16:52:29] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:52:29] KSPI axAction (admin): editUsr
+[27.06.2012 16:52:53] KSPI axAction (admin): sendEditUsr
+[27.06.2012 16:52:53] KSPI axAction (admin): reload_usr
+[27.06.2012 16:52:53] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:52:53] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:53:03] KSPI axAction (admin): createUsr
+[27.06.2012 16:53:04] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:53:04] KSPI axAction (admin): editUsr
+[27.06.2012 16:53:26] KSPI axAction (admin): sendEditUsr
+[27.06.2012 16:53:26] KSPI axAction (admin): reload_usr
+[27.06.2012 16:53:26] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:53:26] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:53:51] KSPI axAction (admin): reload
+[27.06.2012 16:53:51] KSPI axAction (admin): reload
+[27.06.2012 16:54:11] login: chao as user
+[27.06.2012 16:54:20] login: chao as user
+[27.06.2012 16:54:26] login: admin as user
+[27.06.2012 16:54:36] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:54:36] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:54:36] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:54:39] KSPI axAction (admin): editUsr
+[27.06.2012 16:54:55] KSPI axAction (admin): sendEditUsr
+[27.06.2012 16:54:55] KSPI axAction (admin): reload_usr
+[27.06.2012 16:54:55] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:54:55] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:55:12] login: chao as user
+[27.06.2012 16:55:26] login: admin as user
+[27.06.2012 16:58:13] KSPI axAction (admin): editGrp
+[27.06.2012 16:58:29] KSPI axAction (admin): add_edit_knd
+[27.06.2012 16:58:45] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 16:58:45] KSPI axAction (admin): reload_knd
+[27.06.2012 16:58:45] KSPI axAction (admin): reload_pct
+[27.06.2012 16:58:45] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:58:45] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:58:56] KSPI axAction (admin): add_edit_pct
+[27.06.2012 16:59:36] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 16:59:36] KSPI axAction (admin): reload_pct
+[27.06.2012 16:59:36] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:59:36] KSPI axAction (admin): reload_evt
+[27.06.2012 16:59:36] KSPI axAction (admin): refreshSubtab
+[27.06.2012 16:59:41] KSPI axAction (admin): add_edit_pct
+[27.06.2012 17:00:27] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:00:27] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:00:27] KSPI axAction (admin): reload_evt
+[27.06.2012 17:00:27] KSPI axAction (admin): reload_pct
+[27.06.2012 17:00:27] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:00:32] KSPI axAction (admin): add_edit_pct
+[27.06.2012 17:00:42] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:00:42] KSPI axAction (admin): reload_pct
+[27.06.2012 17:00:42] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:00:42] KSPI axAction (admin): reload_evt
+[27.06.2012 17:00:42] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:00:51] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:01:06] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:01:06] KSPI axAction (admin): reload_evt
+[27.06.2012 17:01:06] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:01:18] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:01:32] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:01:32] KSPI axAction (admin): reload_evt
+[27.06.2012 17:01:32] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:01:40] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:01:45] KSPI axAction (admin): deleteEvt
+[27.06.2012 17:01:47] KSPI axAction (admin): deleteEvt
+[27.06.2012 17:01:47] KSPI axAction (admin): reload_evt
+[27.06.2012 17:01:47] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:01:47] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:01:53] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:02:05] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:02:06] KSPI axAction (admin): reload_evt
+[27.06.2012 17:02:06] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:02:08] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:02:18] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:02:19] KSPI axAction (admin): reload_evt
+[27.06.2012 17:02:19] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:02:21] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:02:28] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:02:28] KSPI axAction (admin): reload_evt
+[27.06.2012 17:02:28] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:02:31] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:02:46] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:02:47] KSPI axAction (admin): reload_evt
+[27.06.2012 17:02:47] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:02:52] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:02:54] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:03:06] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:03:06] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:03:06] KSPI axAction (admin): reload_evt
+[27.06.2012 17:03:09] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:03:15] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:03:15] KSPI axAction (admin): reload_evt
+[27.06.2012 17:03:15] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:03:17] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:03:26] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:03:26] KSPI axAction (admin): reload_evt
+[27.06.2012 17:03:26] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:03:28] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:03:35] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:03:35] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:03:35] KSPI axAction (admin): reload_evt
+[27.06.2012 17:03:37] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:03:53] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:03:54] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:03:54] KSPI axAction (admin): reload_evt
+[27.06.2012 17:03:58] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:04:05] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:04:05] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:04:05] KSPI axAction (admin): reload_evt
+[27.06.2012 17:04:29] KSPI axAction (admin): unbanUsr
+[27.06.2012 17:04:30] KSPI axAction (admin): unbanUsr
+[27.06.2012 17:04:35] KSPI axAction (admin): banUsr
+[27.06.2012 17:04:36] KSPI axAction (admin): unbanUsr
+[27.06.2012 17:04:56] KSPI axAction (admin): createGrp
+[27.06.2012 17:04:56] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:05:04] KSPI axAction (admin): editUsr
+[27.06.2012 17:05:08] KSPI axAction (admin): sendEditUsr
+[27.06.2012 17:05:08] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:05:08] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:05:08] KSPI axAction (admin): reload_usr
+[27.06.2012 17:05:10] KSPI axAction (admin): editUsr
+[27.06.2012 17:05:13] KSPI axAction (admin): sendEditUsr
+[27.06.2012 17:05:13] KSPI axAction (admin): reload_usr
+[27.06.2012 17:05:14] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:05:14] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:08:20] KSPI axAction (admin): sendEditAdvanced
+[27.06.2012 17:09:05] login: chao as user
+[27.06.2012 17:09:06] KSPI axAction (chao): logfile
+[27.06.2012 17:09:06] JavaScript: usrshrink
+[27.06.2012 17:09:23] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:09:23] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:09:23] KSPI axAction (chao): bestFittingRate
+[27.06.2012 17:09:43] login: admin as user
+[27.06.2012 17:09:56] KSPI axAction (admin): add_edit_pct
+[27.06.2012 17:10:03] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:10:03] KSPI axAction (admin): reload_pct
+[27.06.2012 17:10:03] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:03] KSPI axAction (admin): reload_evt
+[27.06.2012 17:10:03] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:06] KSPI axAction (admin): add_edit_pct
+[27.06.2012 17:10:10] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:10:10] KSPI axAction (admin): reload_pct
+[27.06.2012 17:10:10] KSPI axAction (admin): reload_evt
+[27.06.2012 17:10:10] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:10] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:12] KSPI axAction (admin): add_edit_pct
+[27.06.2012 17:10:15] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:10:16] KSPI axAction (admin): reload_evt
+[27.06.2012 17:10:16] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:16] KSPI axAction (admin): reload_pct
+[27.06.2012 17:10:16] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:22] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:27] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:10:31] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:10:31] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:31] KSPI axAction (admin): reload_evt
+[27.06.2012 17:10:34] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:10:38] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:10:38] KSPI axAction (admin): reload_evt
+[27.06.2012 17:10:38] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:39] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:10:44] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:10:44] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:44] KSPI axAction (admin): reload_evt
+[27.06.2012 17:10:46] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:10:50] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:10:50] KSPI axAction (admin): reload_evt
+[27.06.2012 17:10:50] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:52] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:10:56] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:10:56] KSPI axAction (admin): reload_evt
+[27.06.2012 17:10:56] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:10:58] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:11:01] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:11:01] KSPI axAction (admin): reload_evt
+[27.06.2012 17:11:01] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:11:06] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:11:09] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:11:10] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:11:10] KSPI axAction (admin): reload_evt
+[27.06.2012 17:11:11] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:11:14] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:11:14] KSPI axAction (admin): reload_evt
+[27.06.2012 17:11:14] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:11:15] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:11:18] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:11:19] KSPI axAction (admin): reload_evt
+[27.06.2012 17:11:19] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:11:20] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:11:24] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:11:24] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:11:24] KSPI axAction (admin): reload_evt
+[27.06.2012 17:11:26] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:11:29] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:11:29] KSPI axAction (admin): reload_evt
+[27.06.2012 17:11:29] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:11:30] KSPI axAction (admin): add_edit_evt
+[27.06.2012 17:11:34] KSPI axAction (admin): add_edit_KndPctEvt
+[27.06.2012 17:11:34] KSPI axAction (admin): reload_evt
+[27.06.2012 17:11:34] KSPI axAction (admin): refreshSubtab
+[27.06.2012 17:12:05] login: chao as user
+[27.06.2012 17:12:06] KSPI axAction (chao): logfile
+[27.06.2012 17:12:06] JavaScript: usrshrink
+[27.06.2012 17:12:10] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:12:10] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:12:10] KSPI axAction (chao): bestFittingRate
+[27.06.2012 17:12:20] KSPI axAction (chao): bestFittingRate
+[27.06.2012 17:12:30] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:12:30] 1 : 3 : : : : 0 : : : 
+[27.06.2012 17:12:30] timecheck: 1
+[27.06.2012 17:12:30] time/datecheck: 1
+[27.06.2012 17:12:30] timecheck: 1
+[27.06.2012 17:12:30] time/datecheck: 1
+[27.06.2012 17:12:30] new_time: a:3:{s:2:"in";i:1340842330;s:3:"out";i:1340842330;s:4:"diff";i:0;}
+[27.06.2012 17:12:30] KSPI axAction (chao): reload_zef
+[27.06.2012 17:12:35] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:12:35] 1 : 3 : : : : 0 : : : 
+[27.06.2012 17:12:35] timecheck: 1
+[27.06.2012 17:12:35] time/datecheck: 1
+[27.06.2012 17:12:35] timecheck: 1
+[27.06.2012 17:12:35] time/datecheck: 1
+[27.06.2012 17:12:35] new_time: a:3:{s:2:"in";i:1340842330;s:3:"out";i:1340842352;s:4:"diff";i:22;}
+[27.06.2012 17:12:35] zef_create_record
+[27.06.2012 17:12:35] a:3:{i:0;s:5:"00000";i:1;N;i:2;N;}
+[27.06.2012 17:12:35] KSPI axAction (chao): reload_zef
+[27.06.2012 17:12:40] KSPI axAction (chao): setTimespace
+[27.06.2012 17:12:40] KSPI axAction (chao): startRecord
+[27.06.2012 17:12:40] KSPI axAction (chao): reload_zef
+[27.06.2012 17:12:40] KSPI axAction (chao): reload_timespan
+[27.06.2012 17:12:40] KSPI axAction (chao): reload_zef
+[27.06.2012 17:12:48] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:12:48] KSPI axAction (chao): edit_running_task
+[27.06.2012 17:12:48] KSPI axAction (chao): reload_zef
+[27.06.2012 17:12:51] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:12:51] KSPI axAction (chao): edit_running_task
+[27.06.2012 17:12:51] KSPI axAction (chao): reload_zef
+[27.06.2012 17:12:52] KSPI axAction (chao): edit_running_task
+[27.06.2012 17:12:52] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:12:53] KSPI axAction (chao): reload_zef
+[27.06.2012 17:13:00] KSPI axAction (chao): stopRecord
+[27.06.2012 17:13:00] KSPI axAction (chao): record
+[27.06.2012 17:13:00] a:3:{i:0;s:5:"00000";i:1;N;i:2;N;}
+[27.06.2012 17:13:00] KSPI axAction (chao): reload_zef
+[27.06.2012 17:13:00] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:13:00] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:13:12] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:13:12] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:13:34] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:13:34] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:14:09] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:14:09] KSPI axAction (chao): edit_running_project
+[27.06.2012 17:14:09] KSPI axAction (chao): reload_evt
+[27.06.2012 17:14:09] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:13] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:14:13] KSPI axAction (chao): edit_running_project
+[27.06.2012 17:14:13] KSPI axAction (chao): reload_evt
+[27.06.2012 17:14:13] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:16] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:14:16] KSPI axAction (chao): edit_running_task
+[27.06.2012 17:14:16] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:23] KSPI axAction (chao): stopRecord
+[27.06.2012 17:14:23] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:30] KSPI axAction (chao): setTimespace
+[27.06.2012 17:14:30] KSPI axAction (chao): startRecord
+[27.06.2012 17:14:30] KSPI axAction (chao): reload_timespan
+[27.06.2012 17:14:30] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:30] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:45] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:14:45] KSPI axAction (chao): edit_running_project
+[27.06.2012 17:14:45] KSPI axAction (chao): reload_evt
+[27.06.2012 17:14:45] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:47] KSPI axAction (chao): saveBuzzerPreselection
+[27.06.2012 17:14:47] KSPI axAction (chao): edit_running_task
+[27.06.2012 17:14:47] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:49] KSPI axAction (chao): stopRecord
+[27.06.2012 17:14:49] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:51] KSPI axAction (chao): setTimespace
+[27.06.2012 17:14:51] KSPI axAction (chao): startRecord
+[27.06.2012 17:14:51] KSPI axAction (chao): reload_timespan
+[27.06.2012 17:14:51] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:51] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:55] KSPI axAction (chao): stopRecord
+[27.06.2012 17:14:55] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:57] KSPI axAction (chao): setTimespace
+[27.06.2012 17:14:57] KSPI axAction (chao): startRecord
+[27.06.2012 17:14:57] KSPI axAction (chao): reload_timespan
+[27.06.2012 17:14:57] KSPI axAction (chao): reload_zef
+[27.06.2012 17:14:57] KSPI axAction (chao): reload_zef
+[27.06.2012 17:15:02] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:02] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:15:02] KSPI axAction (chao): bestFittingRate
+[27.06.2012 17:15:09] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:09] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:15:24] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:25] KSPI axAction (chao): reload_zef
+[27.06.2012 17:15:27] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:27] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:15:32] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:32] KSPI axAction (chao): reload_zef
+[27.06.2012 17:15:34] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:34] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:15:39] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:39] KSPI axAction (chao): reload_zef
+[27.06.2012 17:15:43] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:43] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:15:47] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:47] KSPI axAction (chao): reload_zef
+[27.06.2012 17:15:48] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:48] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:15:54] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:54] KSPI axAction (chao): reload_zef
+[27.06.2012 17:15:56] KSPI axAction (chao): stop
+[27.06.2012 17:15:56] KSPI axAction (chao): reload_zef
+[27.06.2012 17:15:57] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:15:57] KSPI axAction (chao): reload_evt_options
+[27.06.2012 17:16:02] KSPI axAction (chao): add_edit_record
+[27.06.2012 17:16:02] KSPI axAction (chao): reload_zef
+[27.06.2012 17:16:46] KSPI axAction (chao): reload_exp
+[27.06.2012 17:16:46] KSPI axAction (chao): reload_zef
+[27.06.2012 17:16:47] KSPI axAction (chao): reload_exp
+[27.06.2012 17:16:47] KSPI axAction (chao): reload_zef
+[27.06.2012 17:16:47] KSPI axAction (chao): reload_exp
+[27.06.2012 17:16:47] KSPI axAction (chao): reload_zef
+[27.06.2012 17:45:16] KSPI axAction (chao): reload_exp
+[27.06.2012 17:45:20] KSPI axAction (chao): reload
+[27.06.2012 17:45:20] KSPI axAction (chao): reload
+[28.06.2012 00:00:01] KSPI axAction (chao): setTimespace
+[28.06.2012 00:00:02] KSPI axAction (chao): reload_timespan
+[28.06.2012 00:00:02] KSPI axAction (chao): reload_zef
+[28.06.2012 09:30:39] login: admin as user
+[28.06.2012 09:31:09] KSPI axAction (admin): add_edit_evt
+[28.06.2012 09:31:29] KSPI axAction (admin): add_edit_evt
+[28.06.2012 09:31:43] KSPI axAction (admin): add_edit_pct
+[28.06.2012 09:31:57] KSPI axAction (admin): add_edit_pct
+[28.06.2012 09:32:02] KSPI axAction (admin): add_edit_pct
+[28.06.2012 09:32:21] KSPI axAction (admin): refreshSubtab
+[28.06.2012 09:32:25] KSPI axAction (admin): add_edit_evt
+[28.06.2012 09:32:32] KSPI axAction (admin): deleteEvt
+[28.06.2012 09:32:33] KSPI axAction (admin): deleteEvt
+[28.06.2012 09:32:33] KSPI axAction (admin): refreshSubtab
+[28.06.2012 09:32:33] KSPI axAction (admin): reload_evt
+[28.06.2012 09:32:33] KSPI axAction (admin): refreshSubtab
+[28.06.2012 09:32:36] KSPI axAction (admin): add_edit_evt
+[28.06.2012 09:33:08] KSPI axAction (admin): add_edit_pct
+[28.06.2012 09:33:41] KSPI axAction (admin): reload_zef
+[28.06.2012 09:33:49] KSPI axAction (admin): refreshSubtab
+[28.06.2012 09:33:49] KSPI axAction (admin): refreshSubtab
+[28.06.2012 09:33:49] KSPI axAction (admin): refreshSubtab
+[28.06.2012 09:33:55] KSPI axAction (admin): add_edit_knd
+[28.06.2012 09:34:04] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 09:34:04] KSPI axAction (admin): reload_pct
+[28.06.2012 09:34:04] KSPI axAction (admin): refreshSubtab
+[28.06.2012 09:34:04] KSPI axAction (admin): reload_knd
+[28.06.2012 09:34:04] KSPI axAction (admin): refreshSubtab
+[28.06.2012 09:34:15] login: chao as user
+[28.06.2012 09:34:15] KSPI axAction (chao): logfile
+[28.06.2012 09:34:15] JavaScript: usrshrink
+[28.06.2012 09:34:19] KSPI axAction (chao): reload_zef
+[28.06.2012 09:34:19] KSPI axAction (chao): reload_exp
+[28.06.2012 09:34:23] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 09:34:23] KSPI axAction (chao): reload_evt
+[28.06.2012 09:34:24] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 09:34:24] KSPI axAction (chao): reload_evt
+[28.06.2012 12:21:20] KSPI axAction (chao): setTimespace
+[28.06.2012 12:21:20] KSPI axAction (chao): startRecord
+[28.06.2012 12:21:20] KSPI axAction (chao): reload_timespan
+[28.06.2012 12:21:20] KSPI axAction (chao): reload_zef
+[28.06.2012 12:21:20] KSPI axAction (chao): reload_zef
+[28.06.2012 12:21:34] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 12:21:34] KSPI axAction (chao): edit_running_task
+[28.06.2012 12:21:35] KSPI axAction (chao): reload_zef
+[28.06.2012 12:23:02] KSPI axAction (chao): stop
+[28.06.2012 12:23:03] KSPI axAction (chao): reload_zef
+[28.06.2012 12:23:05] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:23:05] KSPI axAction (chao): reload_evt_options
+[28.06.2012 12:23:26] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:23:26] 2 : 8 : : : testing kimai : 0 : : 0.00 : 
+[28.06.2012 12:23:26] timecheck: 1
+[28.06.2012 12:23:26] time/datecheck: 1
+[28.06.2012 12:23:26] timecheck: 1
+[28.06.2012 12:23:26] time/datecheck: 1
+[28.06.2012 12:23:26] new_time: a:3:{s:2:"in";i:1340911260;s:3:"out";i:1340911380;s:4:"diff";i:120;}
+[28.06.2012 12:23:26] zef_edit_record: 7
+[28.06.2012 12:23:27] editrecord:result:1
+[28.06.2012 12:23:27] KSPI axAction (chao): reload_zef
+[28.06.2012 12:23:46] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:23:46] KSPI axAction (chao): reload_evt_options
+[28.06.2012 12:24:16] login: admin as user
+[28.06.2012 12:24:20] KSPI axAction (admin): add_edit_knd
+[28.06.2012 12:24:38] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:24:49] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:24:49] KSPI axAction (admin): reload_evt
+[28.06.2012 12:24:49] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:24:59] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:25:04] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:25:05] KSPI axAction (admin): reload_evt
+[28.06.2012 12:25:05] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:25:23] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:25:30] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:25:31] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:25:31] KSPI axAction (admin): reload_evt
+[28.06.2012 12:25:34] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:25:41] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:25:41] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:25:41] KSPI axAction (admin): reload_evt
+[28.06.2012 12:25:43] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:25:47] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:25:47] KSPI axAction (admin): reload_evt
+[28.06.2012 12:25:47] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:25:48] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:26:08] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:26:08] KSPI axAction (admin): reload_evt
+[28.06.2012 12:26:08] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:26:11] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:26:27] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:26:27] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:26:27] KSPI axAction (admin): reload_evt
+[28.06.2012 12:26:29] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:26:41] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:26:41] KSPI axAction (admin): reload_evt
+[28.06.2012 12:26:41] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:26:43] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:26:58] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:26:59] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:26:59] KSPI axAction (admin): reload_evt
+[28.06.2012 12:27:00] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:27:13] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:27:13] KSPI axAction (admin): reload_evt
+[28.06.2012 12:27:13] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:27:16] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:27:26] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:27:26] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:27:26] KSPI axAction (admin): reload_evt
+[28.06.2012 12:27:28] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:27:52] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:27:52] KSPI axAction (admin): reload_evt
+[28.06.2012 12:27:52] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:27:54] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:28:01] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:28:01] KSPI axAction (admin): reload_evt
+[28.06.2012 12:28:01] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:28:02] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:28:17] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:28:18] KSPI axAction (admin): reload_evt
+[28.06.2012 12:28:18] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:28:19] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:28:28] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:28:28] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:28:28] KSPI axAction (admin): reload_evt
+[28.06.2012 12:28:31] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:28:47] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:28:47] KSPI axAction (admin): reload_evt
+[28.06.2012 12:28:47] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:28:50] KSPI axAction (admin): add_edit_evt
+[28.06.2012 12:28:58] KSPI axAction (admin): add_edit_KndPctEvt
+[28.06.2012 12:28:58] KSPI axAction (admin): reload_evt
+[28.06.2012 12:28:58] KSPI axAction (admin): refreshSubtab
+[28.06.2012 12:29:08] login: chao as user
+[28.06.2012 12:29:09] KSPI axAction (chao): logfile
+[28.06.2012 12:29:09] JavaScript: usrshrink
+[28.06.2012 12:29:13] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:29:13] KSPI axAction (chao): reload_evt_options
+[28.06.2012 12:29:25] KSPI axAction (chao): bestFittingRate
+[28.06.2012 12:29:33] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:29:33] 2 : 19 : : : testing kimai : 0 : : 0.00 : 
+[28.06.2012 12:29:33] timecheck: 1
+[28.06.2012 12:29:33] time/datecheck: 1
+[28.06.2012 12:29:33] timecheck: 1
+[28.06.2012 12:29:33] time/datecheck: 1
+[28.06.2012 12:29:33] new_time: a:3:{s:2:"in";i:1340911260;s:3:"out";i:1340911770;s:4:"diff";i:510;}
+[28.06.2012 12:29:33] zef_edit_record: 7
+[28.06.2012 12:29:33] editrecord:result:1
+[28.06.2012 12:29:33] KSPI axAction (chao): reload_zef
+[28.06.2012 12:29:47] KSPI axAction (chao): reload
+[28.06.2012 12:29:47] KSPI axAction (chao): reload
+[28.06.2012 12:29:54] KSPI axAction (chao): reload
+[28.06.2012 12:30:15] KSPI axAction (chao): PDF
+[28.06.2012 12:30:15] KSPI axAction (chao): PDF
+[28.06.2012 12:30:26] KSPI axAction (chao): export_pdf
+[28.06.2012 12:30:48] KSPI axAction (chao): XLS
+[28.06.2012 12:30:48] KSPI axAction (chao): XLS
+[28.06.2012 12:31:00] KSPI axAction (chao): export_xls
+[28.06.2012 12:33:00] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 12:33:11] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:33:12] KSPI axAction (chao): reload_evt_options
+[28.06.2012 12:33:20] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:33:20] 2 : 19 : : : testing kimai : 0 : : 0.00 : 
+[28.06.2012 12:33:20] timecheck: 1
+[28.06.2012 12:33:20] time/datecheck: 1
+[28.06.2012 12:33:20] timecheck: 1
+[28.06.2012 12:33:20] time/datecheck: 1
+[28.06.2012 12:33:20] new_time: a:3:{s:2:"in";i:1340911260;s:3:"out";i:1340911994;s:4:"diff";i:734;}
+[28.06.2012 12:33:20] zef_edit_record: 7
+[28.06.2012 12:33:20] editrecord:result:1
+[28.06.2012 12:33:20] KSPI axAction (chao): reload_zef
+[28.06.2012 12:33:24] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:33:24] KSPI axAction (chao): reload_evt_options
+[28.06.2012 12:33:24] KSPI axAction (chao): bestFittingRate
+[28.06.2012 12:33:28] KSPI axAction (chao): reload_evt_options
+[28.06.2012 12:33:28] KSPI axAction (chao): bestFittingRate
+[28.06.2012 12:33:34] KSPI axAction (chao): bestFittingRate
+[28.06.2012 12:34:13] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:34:13] 1 : 1 : : : : 0 : : : 
+[28.06.2012 12:34:13] timecheck: 1
+[28.06.2012 12:34:13] time/datecheck: 1
+[28.06.2012 12:34:13] timecheck: 1
+[28.06.2012 12:34:13] time/datecheck: 1
+[28.06.2012 12:34:13] new_time: a:3:{s:2:"in";i:1340902800;s:3:"out";i:1340906400;s:4:"diff";i:3600;}
+[28.06.2012 12:34:13] zef_create_record
+[28.06.2012 12:34:13] a:3:{i:0;s:5:"00000";i:1;N;i:2;N;}
+[28.06.2012 12:34:13] KSPI axAction (chao): reload_zef
+[28.06.2012 12:34:37] KSPI axAction (chao): reload
+[28.06.2012 12:35:22] KSPI axAction (chao): reload
+[28.06.2012 12:35:35] KSPI axAction (chao): reload
+[28.06.2012 12:40:20] KSPI axAction (chao): record
+[28.06.2012 12:40:20] a:3:{i:0;s:5:"00000";i:1;N;i:2;N;}
+[28.06.2012 12:40:20] KSPI axAction (chao): reload_zef
+[28.06.2012 12:40:20] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 12:40:20] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 12:40:43] KSPI axAction (chao): stop
+[28.06.2012 12:40:43] KSPI axAction (chao): reload_zef
+[28.06.2012 12:40:48] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:40:48] KSPI axAction (chao): reload_evt_options
+[28.06.2012 12:41:05] KSPI axAction (chao): add_edit_record
+[28.06.2012 12:41:05] 2 : 19 : : : testing kimai : 0 : : 0.00 : 
+[28.06.2012 12:41:05] timecheck: 1
+[28.06.2012 12:41:05] time/datecheck: 1
+[28.06.2012 12:41:05] timecheck: 1
+[28.06.2012 12:41:05] time/datecheck: 1
+[28.06.2012 12:41:05] new_time: a:3:{s:2:"in";i:1340912040;s:3:"out";i:1340912464;s:4:"diff";i:424;}
+[28.06.2012 12:41:05] zef_edit_record: 9
+[28.06.2012 12:41:05] editrecord:result:1
+[28.06.2012 12:41:05] KSPI axAction (chao): reload_zef
+[28.06.2012 12:41:08] KSPI axAction (chao): record
+[28.06.2012 12:41:08] a:3:{i:0;s:5:"00000";i:1;N;i:2;N;}
+[28.06.2012 12:41:08] KSPI axAction (chao): reload_zef
+[28.06.2012 12:41:08] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 12:41:08] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 12:49:36] KSPI axAction (chao): reload
+[28.06.2012 12:51:09] KSPI axAction (chao): logfile
+[28.06.2012 12:51:09] JavaScript: usrshrink
+[28.06.2012 13:51:48] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 13:51:48] KSPI axAction (chao): edit_running_task
+[28.06.2012 13:51:48] KSPI axAction (chao): reload_zef
+[28.06.2012 13:51:50] KSPI axAction (chao): saveBuzzerPreselection
+[28.06.2012 13:51:50] KSPI axAction (chao): edit_running_task
+[28.06.2012 13:51:50] KSPI axAction (chao): reload_zef
